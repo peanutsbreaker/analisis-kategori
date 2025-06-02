@@ -1,5 +1,5 @@
 <?php
-// db.php
+// db.php primer
 
 $host = 'localhost';            // Server database
 $db   = 'expense_app';         // Ganti dengan nama database kamu
