@@ -120,16 +120,31 @@ document.addEventListener("DOMContentLoaded", () => {
       button.addEventListener("click", () => {
         const id = button.getAttribute("data-id");
         if (confirm("Yakin ingin menghapus data ini?")) {
-          fetch("delete_expenses.php", {
+          fetch("delete_expense.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ id })
           })
           .then(res => {
-            if (!res.ok) throw new Error("Gagal menghapus");
-            loadExpenses();
+            if (!res.ok) {
+              return res.json().then(data => {
+                throw new Error(data.error || "Gagal menghapus");
+              });
+            }
+            return res.json();
           })
-          .catch(err => alert("Error saat menghapus: " + err.message));
+          .then(data => {
+            if (data.success) {
+              alert("Data berhasil dihapus!");
+              loadExpenses(); // Reload data setelah berhasil hapus
+            } else {
+              throw new Error(data.error || "Gagal menghapus");
+            }
+          })
+          .catch(err => {
+            console.error("Error detail:", err);
+            alert("Error saat menghapus: " + err.message);
+          });
         }
       });
     });
